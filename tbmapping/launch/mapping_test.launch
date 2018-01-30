@@ -1,0 +1,11 @@
+  <launch>
+    <remap from="map" to="newmap" />
+  <include file="$(find turtlebot_navigation)/launch/includes/gmapping/gmapping.launch.xml">
+    <arg name="scan_topic"  value="scan" />
+    <arg name="base_frame"  value="base_footprint"/>
+    <arg name="odom_frame"  value="odom"/>
+
+  </include>
+   <rosparam command="load" file="$(find tbmapping)/include/mappingparam.yaml" />
+
+   </launch>

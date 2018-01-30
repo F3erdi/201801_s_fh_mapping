@@ -1,0 +1,34 @@
+
+
+slam_gmapping/map_update_interval: 0.1
+slam_gmapping/maxUrange: 6.0
+slam_gmapping/maxRange: 8.0
+slam_gmapping/sigma: 0.05
+slam_gmapping/kernelSize: 1
+slam_gmapping/lstep: 0.05
+slam_gmapping/astep: 0.05
+slam_gmapping/iterations: 5
+slam_gmapping/lsigma: 0.075
+slam_gmapping/ogain: 3.0
+slam_gmapping/lskip: 0
+slam_gmapping/minimumScore: 200
+slam_gmapping/srr: 0.01
+slam_gmapping/srt: 0.02
+slam_gmapping/str: 0.01
+slam_gmapping/stt: 0.02
+slam_gmapping/linearUpdate: 0.2
+slam_gmapping/angularUpdate: 0.3
+slam_gmapping/temporalUpdate: 10.0
+slam_gmapping/resampleThreshold: 0.5
+slam_gmapping/particles: 200
+
+slam_gmapping/xmin: -1.0
+slam_gmapping/ymin: -1.0
+slam_gmapping/xmax: 1.0
+slam_gmapping/ymax: 1.0
+
+slam_gmapping/delta: 0.05
+slam_gmapping/llsamplerange: 0.01
+slam_gmapping/llsamplestep: 0.01
+slam_gmapping/lasamplerange: 0.005
+slam_gmapping/lasamplestep: 0.005
