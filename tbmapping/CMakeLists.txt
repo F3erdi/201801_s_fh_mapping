@@ -8,21 +8,12 @@ project(tbmapping)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  dynamic_reconfigure
-  geometry_msgs
-  map_server
-  nav_msgs
-  roscpp
-  rospy
-  sensor_msgs
-  std_msgs
-  turtlebot_navigation
-#        opencv3
+  dynamic_reconfigure geometry_msgs map_server nav_msgs roscpp rospy sensor_msgs std_msgs turtlebot_navigation cv_bridge image_transport
 )
 
 ## System dependencies are found with CMake's conventions
- find_package(Boost REQUIRED COMPONENTS system)
-
+ #find_package(Boost REQUIRED COMPONENTS system )
+find_package(OpenCV REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -125,6 +116,7 @@ catkin_package(
 include_directories(
  include
  ${catkin_INCLUDE_DIRS}
+        ${OpenCV_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -157,6 +149,7 @@ add_dependencies(merge_map merge_map_gencfg)
 ## Specify libraries to link a library or executable target against
  target_link_libraries(merge_map
    ${catkin_LIBRARIES}
+         ${OpenCV_LIBRARIES}
 )
 #target_link_libraries(${PROJECT_NAME}_node
  #  ${catkin_LIBRARIES}

@@ -1,5 +1,6 @@
   <launch>
     <remap from="map" to="newmap" />
+    <remap from="map_metadata" to ="dyn_metadata"/>
   <include file="$(find turtlebot_navigation)/launch/includes/gmapping/gmapping.launch.xml">
     <arg name="scan_topic"  value="scan" />
     <arg name="base_frame"  value="base_footprint"/>
