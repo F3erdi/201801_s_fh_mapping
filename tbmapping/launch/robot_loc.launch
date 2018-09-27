@@ -87,9 +87,7 @@
   <include file="$(find turtlebot_navigation)/launch/includes/amcl/amcl.launch.xml">
     <arg name="scan_topic" value="scan"/>
     <arg name="use_map_topic" value="true"/>
-    <arg name="initial_pose_x" value="2.0"/>
-    <arg name="initial_pose_y" value="2.0"/>
-    <arg name="initial_pose_a" value="$(arg initial_pose_a)"/>
+
   </include>
 
 

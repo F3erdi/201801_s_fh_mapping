@@ -15,35 +15,47 @@
 std::vector<int> compression_params;
 cv::Mat stat_mat;
 cv::Mat dyn_mat;
-cv::Mat temp;
+cv::Mat dyn_temp;
+cv::Mat stat_temp;
+cv::Mat new_map;
+cv::Mat mask;
+bool stat_received=false;
 int i = 0;
 
 
 void DYNCallback(const nav_msgs::OccupancyGrid& dyn)
 {
-    ROS_INFO("DYNerhalten!");
 
-    if(i%2==0) {
-        temp.create(cv::Size(dyn.info.width, dyn.info.height), CV_8SC1);
+
+    if(i%2==0 && stat_received) {
+
+        dyn_temp.create(cv::Size(dyn.info.width, dyn.info.height), CV_8SC1);
         dyn_mat.create(cv::Size(dyn.info.width, dyn.info.height), CV_8UC1);
 
-        std::cout<<"temp: "<<temp.isContinuous()<<std::endl;
-        std::cout<<"dyn: "<<dyn_mat.isContinuous()<<std::endl;
+
+        ROS_INFO("DYNerhalten!");
+
+        memcpy(&dyn_temp.data, &dyn.data, sizeof(dyn.data));
+       // memcpy(&dyn_mat.data, &dyn.data, sizeof(dyn.data));
+        dyn_temp.copyTo(dyn_mat);
+
+        /*dyn_mat.setTo(250, dyn_temp > 0);
+        dyn_mat.setTo(0, dyn_temp < 0);
+        dyn_mat.setTo(125, dyn_temp == 0);*/
 
 
-
-        memcpy(&temp.data, &dyn.data, sizeof(dyn.data));
-        memcpy(&dyn_mat.data, &dyn.data, sizeof(dyn.data));
-
-
-
-        dyn_mat.setTo(255, temp < 0);
-
-
+        cv::imwrite("temp.png", dyn_temp, compression_params);
         cv::imwrite("dyn.png", dyn_mat,compression_params);
-        cv::imwrite("temp.png", temp,compression_params);
+
+        new_map=dyn_mat.clone();
 
 
+        mask.setTo(250, dyn_mat==100);
+
+        /*new_map.setTo(100, mask==250);
+
+        cv::imwrite("new_map.png",new_map,compression_params);
+*/
         std::cout<<i<<std::endl;
     }
     i++;
@@ -55,15 +67,26 @@ void STATCallback(const nav_msgs::OccupancyGrid& stat)
     ROS_INFO("STATerhalten!");
 
 
-    stat_mat = cv::Mat::zeros(cv::Size(stat.info.width,stat.info.height),CV_8SC1);
+    stat_temp.create(cv::Size(stat.info.width, stat.info.height), CV_8SC1);
+    stat_mat.create(cv::Size(stat.info.width,stat.info.height),CV_8UC1);
+    mask.zeros(stat_mat.size(),CV_8UC1);
 
+    memcpy(&stat_temp.data, &stat.data, sizeof(stat.data));
     memcpy(&stat_mat.data,&stat.data,sizeof(stat.data));
 
-    stat_mat.setTo(255,stat_mat<0);
+    stat_mat.setTo(255,stat_temp<0);
+
+    std::cout<<"stat Größe "<<stat_mat.size()<<std::endl;
+
 
     cv::imwrite("stat.png",stat_mat,compression_params);
 
 
+    mask.setTo(250,stat_mat == 100);
+
+
+
+    stat_received = true;
 
 }
 
