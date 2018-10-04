@@ -3,7 +3,7 @@
     <remap from="map_metadata" to ="dyn_metadata"/>
   <include file="$(find turtlebot_navigation)/launch/includes/gmapping/gmapping.launch.xml">
     <arg name="scan_topic"  value="scan" />
-    <arg name="base_frame"  value="base_footprint"/>
+    <arg name="base_frame"  value="map"/>
     <arg name="odom_frame"  value="odom"/>
 
   </include>

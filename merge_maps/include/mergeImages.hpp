@@ -21,9 +21,8 @@ public:
     //~mergeImages();
 
     cv_bridge::CvImage cv_img_dyn;
-
     cv_bridge::CvImage cv_img_stat;
-
+    cv_bridge::CvImage cv_img_new;
 
 
     int stat_received;
@@ -42,17 +41,27 @@ public:
         cv_img_dyn.header.frame_id = "dyn_temp";
         cv_img_dyn.encoding = sensor_msgs::image_encodings::MONO8;
 
+        ROS_INFO("stat: %d  %d",cv_img_stat.image.rows,cv_img_stat.image.cols);
+        ROS_INFO("dyn: %d  %d",cv_img_dyn.image.rows,cv_img_dyn.image.cols);
+        ROS_INFO("new: %d  %d",cv_img_new.image.rows,cv_img_new.image.cols);
+
+
+
+
+
 
         if(stat_received == 1 && dyn_received==1)
         {
 
-            cv_img_stat.image.setTo((unsigned char)(255),cv_img_dyn.image==255);
-            ROS_INFO("hier?");
-            cv_img_stat.image.setTo((unsigned char)(0),cv_img_dyn.image==0);
+
+            cv_img_new.image = cv::Mat(cv_img_stat.image.rows, cv_img_stat.image.cols, CV_8U);
+
+            cv::add(cv_img_stat.image,cv_img_dyn.image,cv_img_new.image);
 
 
         dyn_received=0;
-            return(cv_img_stat);
+
+            return(cv_img_new);
         }
 
         else

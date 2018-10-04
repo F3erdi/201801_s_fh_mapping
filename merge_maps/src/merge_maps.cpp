@@ -37,11 +37,14 @@ void DYNCallback(const nav_msgs::OccupancyGridConstPtr& dyn_grid) {
         return;
     }
 
+
+
     cv_img_full_.header.frame_id = "dyn_image";
     cv_img_full_.encoding = sensor_msgs::image_encodings::MONO8;
     // Only if someone is subscribed to it, do work and publish full map image
 
     cv::Mat *map_mat = &cv_img_full_.image;
+
     // resize cv image if it doesn't have the same dimensions as the map
     if ((map_mat->rows != size_y) && (map_mat->cols != size_x)) {
         *map_mat = cv::Mat(size_y, size_x, CV_8U);
@@ -65,11 +68,11 @@ void DYNCallback(const nav_msgs::OccupancyGridConstPtr& dyn_grid) {
 
             switch (map_data[idx_map_y + x]) {
                 case -1:
-                    map_mat_data_p[idx] = 127;
+                    map_mat_data_p[idx] = 63;
                     break;
 
                 case 0:
-                    map_mat_data_p[idx] = 255;
+                    map_mat_data_p[idx] = 127;
                     break;
 
                 case 100:
@@ -79,8 +82,9 @@ void DYNCallback(const nav_msgs::OccupancyGridConstPtr& dyn_grid) {
         }
     }
 
+
     cv::imwrite("dyn.png", cv_img_full_.image,compression_params);
-    mergeImages1.cv_img_dyn;
+    mergeImages1.cv_img_dyn=cv_img_full_;
     mergeImages1.dyn_received=1;
 
     cv_bridge::CvImage map = mergeImages1.merge();
@@ -90,11 +94,10 @@ void DYNCallback(const nav_msgs::OccupancyGridConstPtr& dyn_grid) {
 
 void STATCallback(const nav_msgs::OccupancyGridConstPtr& stat_grid)
 {
-    ROS_INFO("STATerhalten!");
+
 
     int size_x = stat_grid->info.width;
     int size_y = stat_grid->info.height;
-
 
 
     if ((size_x < 3) || (size_y < 3) ){
@@ -104,9 +107,9 @@ void STATCallback(const nav_msgs::OccupancyGridConstPtr& stat_grid)
 
     cv_img_full_stat.header.frame_id = "stat_image";
     cv_img_full_stat.encoding = sensor_msgs::image_encodings::MONO8;
-    // Only if someone is subscribed to it, do work and publish full map image
 
     cv::Mat* map_mat_stat = &cv_img_full_stat.image;
+
     // resize cv image if it doesn't have the same dimensions as the map
     if ( (map_mat_stat->rows != size_y) && (map_mat_stat->cols != size_x)){
         *map_mat_stat = cv::Mat(size_y, size_x, CV_8U);
@@ -131,11 +134,11 @@ void STATCallback(const nav_msgs::OccupancyGridConstPtr& stat_grid)
 
             switch (map_data_stat[idx_map_y + x]) {
                 case -1:
-                    map_mat_data_p_stat[idx] = 127;
+                    map_mat_data_p_stat[idx] = 63;
                     break;
 
                 case 0:
-                    map_mat_data_p_stat[idx] = 255;
+                    map_mat_data_p_stat[idx] = 127;
                     break;
 
                 case 100:
