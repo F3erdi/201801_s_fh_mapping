@@ -24,8 +24,8 @@ slam_gmapping/particles: 200
 
 slam_gmapping/xmin: -1.0
 slam_gmapping/ymin: -1.0
-slam_gmapping/xmax: 1.0
-slam_gmapping/ymax: 1.0
+slam_gmapping/xmax: 10.0
+slam_gmapping/ymax: 10.0
 
 slam_gmapping/delta: 0.05
 slam_gmapping/llsamplerange: 0.01

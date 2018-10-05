@@ -83,13 +83,13 @@
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)">
     <param name="frame_id" value="/map"/>
   </node>
-
-  <include file="$(find turtlebot_navigation)/launch/includes/amcl/amcl.launch.xml">
+<!--
+  <include file="$(find tbmapping)/include/amcl.launch.xml">
     <arg name="scan_topic" value="scan"/>
-    <arg name="use_map_topic" value="false"/>
+    <arg name="use_map_topic" value="true"/>
 
   </include>
-
+-->
 
 
   <!--  **************** Visualisation ****************  -->
