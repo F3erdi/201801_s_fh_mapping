@@ -62,7 +62,7 @@
   </node>
 
 
-  <remap from="map" to="newmap" />
+ <!-- <remap from="map" to="newmap" />-->
 
   <!--  ************** Navigation  ***************  -->
   <include file="$(find turtlebot_navigation)/launch/includes/move_base.launch.xml"/>

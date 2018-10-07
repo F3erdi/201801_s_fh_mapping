@@ -11,6 +11,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include "ros/ros.h"
 #include <sensor_msgs/image_encodings.h>
+#include <geometry_msgs/Point.h>
 
 class mergeImages{
 
@@ -24,9 +25,11 @@ public:
     cv_bridge::CvImage cv_img_stat;
     cv_bridge::CvImage cv_img_new;
     cv_bridge::CvImage stat,dyn;
-    cv_bridge::CvImage bigStat,bigDyn;
-    int offset_x,origin_x;
-    int offset_y,origin_y;
+    cv::Mat warp_mat;
+    geometry_msgs::Point src_tri,dst_tri;
+    int offset_x,offset_y;
+    int offset_received;
+
 
     int stat_received;
     int dyn_received;
@@ -37,9 +40,13 @@ public:
     //cv_bridge::CvImage map;
     void Provide_Stat()
     {
+
+
+
+
         stat.header.frame_id = "stat";
         stat.encoding = sensor_msgs::image_encodings::MONO8;
-        stat.image = cv::Mat(800, 800, CV_8U);
+        stat.image = cv::Mat::zeros(800, 800, CV_8U);
 
         int cols_stat=cv_img_stat.image.cols;
         int rows_stat=cv_img_stat.image.rows;
@@ -48,7 +55,7 @@ public:
 
         return;
     }
-
+/*
     void Provide_Dyn()
     {
 
@@ -61,33 +68,56 @@ public:
 
         int cols_dyn=cv_img_dyn.image.cols;
         int rows_dyn=cv_img_dyn.image.rows;
-        int pos_x=((400-(cols_dyn/2))-(cols_dyn%2))-offset_x-origin_x;
-        int pos_y=((400-(rows_dyn/2))-(rows_dyn%2))-offset_y+origin_y;
+        int pos_x=((400-(cols_dyn/2))-(cols_dyn%2))+offset_x;
+        int pos_y=((400-(rows_dyn/2))-(rows_dyn%2))-offset_y;
 
         cv_img_dyn.image.copyTo(dyn.image(cv::Rect(pos_x,pos_y,cols_dyn,rows_dyn)));
 
         return;
     }
-
+*/
     cv_bridge::CvImage merge()
     {
         cv_img_stat.header.frame_id = "stat_temp";
         cv_img_stat.encoding = sensor_msgs::image_encodings::MONO8;
         cv_img_dyn.header.frame_id = "dyn_temp";
         cv_img_dyn.encoding = sensor_msgs::image_encodings::MONO8;
+        cv_bridge::CvImage cv_img_dyn_w;
 
-        ROS_INFO("stat: %d  %d",cv_img_stat.image.rows,cv_img_stat.image.cols);
-        ROS_INFO("dyn: %d  %d",cv_img_dyn.image.rows,cv_img_dyn.image.cols);
-        ROS_INFO("new: %d  %d",cv_img_new.image.rows,cv_img_new.image.cols);
 
 
         if(stat_received == 1 && dyn_received==1)
         {
 
 
-            cv_img_new.image = cv::Mat(800, 800, CV_8U);
 
-            cv::add(stat.image,dyn.image,cv_img_new.image);
+
+
+            cv_img_new.image=cv::Mat::zeros(cv_img_stat.image.size(),CV_8U);
+            cv_img_dyn_w.image=cv::Mat (cv_img_stat.image.size(),CV_8U);
+
+            offset_x=src_tri.x-dst_tri.x;
+            offset_y=src_tri.y-dst_tri.y;
+
+            ROS_INFO("ofx: %i, ofy: %i",offset_x,offset_y);
+
+
+            float of[]={1,0,offset_x,0,1,offset_y};
+
+
+            warp_mat = cv::Mat (2,3,CV_32FC1,of);
+
+
+
+            cv::warpAffine(cv_img_dyn.image,cv_img_dyn_w.image,warp_mat,cv_img_dyn_w.image.size());
+
+          //  ROS_INFO("stat: %d  %d",cv_img_stat.image.rows,cv_img_stat.image.cols);
+          //  ROS_INFO("dyn: %d  %d",cv_img_dyn.image.rows,cv_img_dyn.image.cols);
+          //  ROS_INFO("new: %d  %d",cv_img_new.image.rows,cv_img_new.image.cols);
+
+            cv::imwrite("warp.png", cv_img_dyn_w.image);
+
+            cv::add(cv_img_stat.image,cv_img_dyn_w.image,cv_img_new.image);
 
 
         dyn_received=0;

@@ -16,7 +16,8 @@
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <sensor_msgs/image_encodings.h>
 #include "../include/mergeImages.hpp"
-
+#include <merge_maps/triangle.h>
+#include <geometry_msgs/Point.h>
 
 
 cv_bridge::CvImage cv_img_full_;
@@ -24,29 +25,19 @@ cv_bridge::CvImage cv_img_full_stat;
 mergeImages mergeImages1;
 std::vector<int> compression_params;
 bool stat_received=false;
-int i = 0;
+int tfreceived = 0;
 int offset_x = 0;
 int offset_y = 0;
-void origin(const nav_msgs::MapMetaDataConstPtr& origin)
+int firstmerge=1;
+void offsetCallback(const merge_maps::triangle& cords)
 {
-    float o_x=origin->origin.position.x;
-    float o_y=origin->origin.position.y;
-    mergeImages1.origin_x=o_x;
-    mergeImages1.origin_y=o_y;
-}
-
-
-
-void init(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& pose_init)
-{
-       float x_temp = pose_init->pose.pose.position.x;
-       float y_temp = pose_init->pose.pose.position.y;
-
-    offset_x=x_temp/0.05;
-    offset_y=y_temp/0.05;
-    mergeImages1.offset_x=offset_x;
-    mergeImages1.offset_y=offset_y;
-
+    if(firstmerge==1)
+    {
+        mergeImages1.src_tri = cords.src;
+        mergeImages1.dst_tri = cords.dst;
+        mergeImages1.offset_received = 1;
+        firstmerge=0;
+    }
 }
 
 void DYNCallback(const nav_msgs::OccupancyGridConstPtr& dyn_grid) {
@@ -95,25 +86,30 @@ void DYNCallback(const nav_msgs::OccupancyGridConstPtr& dyn_grid) {
                     break;
 
                 case 0:
-                    map_mat_data_p[idx] = 127;
+                    map_mat_data_p[idx]  = 127;
                     break;
 
                 case 100:
-                    map_mat_data_p[idx] = 0;
+                    map_mat_data_p[idx]  = 0;
                     break;
             }
         }
     }
 
 
+
     cv::imwrite("dyn.png", cv_img_full_.image,compression_params);
-    mergeImages1.cv_img_dyn=cv_img_full_;
-    mergeImages1.Provide_Dyn();
-    mergeImages1.dyn_received=1;
+
+
+if(mergeImages1.offset_received==1) {
+    //mergeImages1.warp_mat=cv::Mat (2,3,CV_32FC1);
+    mergeImages1.cv_img_dyn = cv_img_full_;
+    mergeImages1.dyn_received = 1;
 
     cv_bridge::CvImage map = mergeImages1.merge();
-    cv::imwrite("map.png", map.image,compression_params);
 
+    cv::imwrite("map.png", map.image, compression_params);
+}
     }
 
 
@@ -159,15 +155,15 @@ void STATCallback(const nav_msgs::OccupancyGridConstPtr& stat_grid)
 
             switch (map_data_stat[idx_map_y + x]) {
                 case -1:
-                    map_mat_data_p_stat[idx] = 63;
+                    map_mat_data_p_stat[idx]  = 63;
                     break;
 
                 case 0:
-                    map_mat_data_p_stat[idx] = 127;
+                    map_mat_data_p_stat[idx]  = 127;
                     break;
 
                 case 100:
-                    map_mat_data_p_stat[idx] = 0;
+                    map_mat_data_p_stat[idx]  = 0;
                     break;
             }
         }
@@ -176,7 +172,7 @@ void STATCallback(const nav_msgs::OccupancyGridConstPtr& stat_grid)
     cv::imwrite("stat.png", cv_img_full_stat.image,compression_params);
 
     mergeImages1.cv_img_stat=cv_img_full_stat;
-    mergeImages1.Provide_Stat();
+   // mergeImages1.Provide_Stat();
     mergeImages1.stat_received=1;
 }
 
@@ -193,11 +189,8 @@ int main(int argc, char **argv)
 
     ros::NodeHandle n;
 
-
-
-
-    ros::Subscriber originPose = n.subscribe("MapMetaData",1,origin);
-    ros::Subscriber initPose = n.subscribe("initialpose",1,init);
+    //ros::Subscriber originPose = n.subscribe("MapMetaData",1,origin);
+    ros::Subscriber offset = n.subscribe("offset",2,offsetCallback);
     ros::Subscriber stat_map = n.subscribe("map", 100, STATCallback);
 
 
