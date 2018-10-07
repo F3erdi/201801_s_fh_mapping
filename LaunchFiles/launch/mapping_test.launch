@@ -7,6 +7,6 @@
     <arg name="odom_frame"  value="odom"/>
 
   </include>
-   <rosparam command="load" file="$(find tbmapping)/include/mappingparam.yaml" />
+   <rosparam command="load" file="$(find LaunchFiles)/include/mappingparam.yaml" />
 
    </launch>

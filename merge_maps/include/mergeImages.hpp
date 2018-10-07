@@ -55,27 +55,7 @@ public:
 
         return;
     }
-/*
-    void Provide_Dyn()
-    {
 
-
-        dyn.header.frame_id = "dyn";
-        dyn.encoding = sensor_msgs::image_encodings::MONO8;
-        dyn.image = cv::Mat(800, 800, CV_8U);
-        ROS_INFO("x: %i ",offset_x);
-        ROS_INFO("y: %i",offset_y);
-
-        int cols_dyn=cv_img_dyn.image.cols;
-        int rows_dyn=cv_img_dyn.image.rows;
-        int pos_x=((400-(cols_dyn/2))-(cols_dyn%2))+offset_x;
-        int pos_y=((400-(rows_dyn/2))-(rows_dyn%2))-offset_y;
-
-        cv_img_dyn.image.copyTo(dyn.image(cv::Rect(pos_x,pos_y,cols_dyn,rows_dyn)));
-
-        return;
-    }
-*/
     cv_bridge::CvImage merge()
     {
         cv_img_stat.header.frame_id = "stat_temp";
@@ -88,10 +68,6 @@ public:
 
         if(stat_received == 1 && dyn_received==1)
         {
-
-
-
-
 
             cv_img_new.image=cv::Mat::zeros(cv_img_stat.image.size(),CV_8U);
             cv_img_dyn_w.image=cv::Mat (cv_img_stat.image.size(),CV_8U);

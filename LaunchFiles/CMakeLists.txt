@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(tbmapping)
+project(LaunchFiles)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -8,12 +8,11 @@ project(tbmapping)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  dynamic_reconfigure geometry_msgs map_server nav_msgs roscpp rospy sensor_msgs std_msgs turtlebot_navigation cv_bridge image_transport
 )
 
 ## System dependencies are found with CMake's conventions
  #find_package(Boost REQUIRED COMPONENTS system )
-find_package(OpenCV REQUIRED)
+#find_package(OpenCV REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -103,7 +102,7 @@ find_package(OpenCV REQUIRED)
 catkin_package(
  # INCLUDE_DIRS include
 #  LIBRARIES tbmapping
-  CATKIN_DEPENDS dynamic_reconfigure geometry_msgs map_server nav_msgs roscpp rospy sensor_msgs std_msgs turtlebot_navigation
+  CATKIN_DEPENDS
 #  DEPENDS system_lib
 )
 
@@ -113,11 +112,11 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(
- include
- ${catkin_INCLUDE_DIRS}
-        ${OpenCV_INCLUDE_DIRS}
-)
+#include_directories(
+# include
+# ${catkin_INCLUDE_DIRS}
+ #       ${OpenCV_INCLUDE_DIRS}
+#)
 
 ## Declare a C++ library
  #add_library(${PROJECT_NAME}
@@ -133,7 +132,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
- add_executable(map_publisher src/map_publisher.cpp include/map_publisher.hpp)
+ #add_executable(merge_map src/merge_map.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -147,10 +146,10 @@ include_directories(
 #add_dependencies(merge_map merge_map_gencfg)
 
 ## Specify libraries to link a library or executable target against
- target_link_libraries(map_publisher
-   ${catkin_LIBRARIES}
-         ${OpenCV_LIBRARIES}
-)
+ #target_link_libraries(merge_map
+#   ${catkin_LIBRARIES}
+ #        ${OpenCV_LIBRARIES}
+#)
 #target_link_libraries(${PROJECT_NAME}_node
  #  ${catkin_LIBRARIES}
  #        )

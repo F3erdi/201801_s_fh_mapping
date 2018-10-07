@@ -18,6 +18,7 @@
 #include "../include/mergeImages.hpp"
 #include <merge_maps/triangle.h>
 #include <geometry_msgs/Point.h>
+#include <image_transport/image_transport.h>
 
 
 cv_bridge::CvImage cv_img_full_;
@@ -29,6 +30,7 @@ int tfreceived = 0;
 int offset_x = 0;
 int offset_y = 0;
 int firstmerge=1;
+
 void offsetCallback(const merge_maps::triangle& cords)
 {
     if(firstmerge==1)
@@ -96,8 +98,6 @@ void DYNCallback(const nav_msgs::OccupancyGridConstPtr& dyn_grid) {
         }
     }
 
-
-
     cv::imwrite("dyn.png", cv_img_full_.image,compression_params);
 
 
@@ -108,8 +108,19 @@ if(mergeImages1.offset_received==1) {
 
     cv_bridge::CvImage map = mergeImages1.merge();
 
+    ros::NodeHandle nh;
+    image_transport::ImageTransport it(nh);
+    image_transport::Publisher pub = it.advertise("mapimage",1);
+    sensor_msgs::ImagePtr msg = map.toImageMsg();
+
+    pub.publish(msg);
+
     cv::imwrite("map.png", map.image, compression_params);
-}
+
+
+
+
+    }
     }
 
 
