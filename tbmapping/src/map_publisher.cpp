@@ -17,71 +17,101 @@
 #include <image_transport/image_transport.h>
 #include "../include/map_publisher.hpp"
 
-map_publisher publisher;
 
+map_publisher publisher;
 
 
 void mapimage(const sensor_msgs::ImagePtr& map_image)
 {
-    nav_msgs::OccupancyGrid gridmap;
+    if(publisher.meta_erhalten==1) {
 
-    gridmap.info.width=map_image->width;
-    gridmap.info.height=map_image->height;
-    gridmap.info.resolution= 0.05;
-    gridmap.info.map_load_time=ros::Time::now();
-    gridmap.header.frame_id = "map";
+        nav_msgs::OccupancyGrid gridmap;
+        nav_msgs::OccupancyGridPtr& gridmap;
+        gridmap->info.width = publisher.meta.width;
 
-    int size_x =map_image->width;
-    int size_y =map_image->height;
+        gridmap->info.height = publisher.meta.height;
+
+        gridmap->info.resolution = publisher.meta.resolution;
+
+        gridmap->info.origin = publisher.meta.origin;
+
+        gridmap->info.map_load_time = ros::Time::now();
+
+        gridmap->header.frame_id = "map";
+
+        int size_x = map_image->step;
+        int size_y = map_image->height;
+
+        ROS_INFO("size x: %i, y: %i",size_x,size_y);
 
 
+        const std::vector<unsigned char> &mat_data_stat(map_image->data);
+       // std::vector <int8_t> &map_mat_data_p_ =  gridmap.data;
 
+        //std::vector <int8_t> *map_mat_data_p_= gridmap.data;
+        std::vector <int8_t> &map_mat_data_p_(gridmap->data);
 
+        ROS_INFO("map erhalten");
 
-    const std::vector<unsigned char>& map_data_stat (map_image->data);
-    std::vector<int8_t>& map_mat_data_p_=(std::vector<int8_t>&) gridmap.data;
+        //We have to flip around the y axis, y for image starts at the top and y for map at the bottom
+        int size_y_rev = size_y - 1;
 
+        for (int y = size_y_rev; y > 0; --y) {
 
+            int idx_img_y = size_x * (size_y - y);
+            int idx_map_y = size_x * y;
+        ROS_INFO("y: %i",idx_map_y);
+            for (int x = 0; x < size_x; ++x) {
 
-    //We have to flip around the y axis, y for image starts at the top and y for map at the bottom
-    int size_y_rev = size_y-1;
+                ROS_INFO("x: %i",mat_data_stat[idx_img_y + x]);
 
-    for (int y = size_y_rev; y >= 0; --y) {
+                int idx = idx_map_y + x;
 
-        int idx_img_y = size_x * (size_y - y);
-        int idx_map_y = size_x * y;
+                switch (mat_data_stat[idx_img_y + x]) {
+                    case 63:
+                        map_mat_data_p_[idx] = -1;
+                        break;
 
-        for (int x = 0; x < size_x; ++x) {
+                    case 127:
+                        map_mat_data_p_[idx] = 0;
+                        break;
 
-            int idx = idx_map_y + x;
+                    case 0:
+                        map_mat_data_p_[idx] = 100;
+                        break;
 
-            switch (map_data_stat[idx_img_y + x]) {
-                case 63:
-                    map_mat_data_p_[idx]  = -1;
-                    break;
+                    case 126:
+                        map_mat_data_p_[idx] = -1;
+                        break;
 
-                case 127:
-                    map_mat_data_p_[idx]  = 0;
-                    break;
-
-                case 0:
-                    map_mat_data_p_[idx]  = 100;
-                    break;
-
-                case 126:
-                    map_mat_data_p_[idx]  = -1;
-                    break;
-
-                case 254:
-                    map_mat_data_p_[idx]  = 0;
-                    break;
+                    case 254:
+                        map_mat_data_p_[idx] = 0;
+                        break;
+                }
             }
         }
+
+        nav_msgs::OccupancyGrid::Ptr msg = gridmap;
+        ROS_INFO("map gesendet");
+        publisher.map_pub.publish(msg);
     }
+}
 
-    nav_msgs::OccupancyGrid msg = gridmap;
+void metaData(const nav_msgs::MapMetaDataConstPtr& meta_data)
+{
+    if(publisher.meta_erhalten==0)
+    {
+        publisher.meta.origin = meta_data->origin;
 
-    publisher.map_pub.publish(msg);
+        publisher.meta.width = meta_data->width;
+
+        publisher.meta.height = meta_data->height;
+
+        publisher.meta.resolution = meta_data->resolution;
+
+
+        publisher.meta_erhalten = 1;
+    }
 }
 
 int main(int argc, char **argv)
@@ -93,6 +123,8 @@ int main(int argc, char **argv)
 
     ros::NodeHandle n=publisher.Handler();
 
+
+    ros::Subscriber data = n.subscribe("map_metadata",1,metaData);
     ros::Subscriber image = n.subscribe("mapimage",1,mapimage);
     publisher.map_pub= n.advertise<nav_msgs::OccupancyGrid>("tempmap",1);
 

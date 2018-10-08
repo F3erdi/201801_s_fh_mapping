@@ -12,6 +12,7 @@
 #include "ros/ros.h"
 #include <sensor_msgs/image_encodings.h>
 #include <geometry_msgs/Point.h>
+#include <image_transport/image_transport.h>
 
 class mergeImages{
 
@@ -30,31 +31,21 @@ public:
     int offset_x,offset_y;
     int offset_received;
 
+    image_transport::ImageTransport itx();
+    image_transport::Publisher pub;
 
     int stat_received;
     int dyn_received;
 
 
-
+    ros::NodeHandle Handler()
+    {
+        ros::NodeHandle n;
+        return(n);
+    }
 
     //cv_bridge::CvImage map;
-    void Provide_Stat()
-    {
 
-
-
-
-        stat.header.frame_id = "stat";
-        stat.encoding = sensor_msgs::image_encodings::MONO8;
-        stat.image = cv::Mat::zeros(800, 800, CV_8U);
-
-        int cols_stat=cv_img_stat.image.cols;
-        int rows_stat=cv_img_stat.image.rows;
-
-        cv_img_stat.image.copyTo(stat.image(cv::Rect((400-(cols_stat/2))-(cols_stat%2),(400-(rows_stat/2))-(rows_stat%2),cols_stat,rows_stat)));
-
-        return;
-    }
 
     cv_bridge::CvImage merge()
     {

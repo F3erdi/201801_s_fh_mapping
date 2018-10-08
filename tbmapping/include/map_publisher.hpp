@@ -6,10 +6,18 @@
 #define TBMAPPING_MAP_PUBLISHER_HPP
 
 #include "ros/ros.h"
+#include <nav_msgs/MapMetaData.h>
+#include <geometry_msgs/Point.h>
 
 class map_publisher
 {
 public:
+
+
+    nav_msgs::MapMetaData meta;
+    int meta_erhalten;
+
+
     ros::Publisher map_pub;
     
     ros::NodeHandle Handler()

@@ -108,12 +108,9 @@ if(mergeImages1.offset_received==1) {
 
     cv_bridge::CvImage map = mergeImages1.merge();
 
-    ros::NodeHandle nh;
-    image_transport::ImageTransport it(nh);
-    image_transport::Publisher pub = it.advertise("mapimage",1);
     sensor_msgs::ImagePtr msg = map.toImageMsg();
 
-    pub.publish(msg);
+    mergeImages1.pub.publish(msg);
 
     cv::imwrite("map.png", map.image, compression_params);
 
@@ -198,12 +195,14 @@ int main(int argc, char **argv)
 
 
 
-    ros::NodeHandle n;
+    ros::NodeHandle n= mergeImages1.Handler();
 
     //ros::Subscriber originPose = n.subscribe("MapMetaData",1,origin);
     ros::Subscriber offset = n.subscribe("offset",2,offsetCallback);
     ros::Subscriber stat_map = n.subscribe("map", 100, STATCallback);
+    image_transport::ImageTransport it(mergeImages1.Handler());
 
+    mergeImages1.pub = it.advertise("mapimage",1);
 
     ros::Subscriber dyn_map = n.subscribe("newmap", 100, DYNCallback);
 
