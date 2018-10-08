@@ -1,3 +1,2 @@
-geometry_msgs/Point src
-
-geometry_msgs/Point dst
+int32 offset_x
+int32 offset_y

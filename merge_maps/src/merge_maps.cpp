@@ -19,6 +19,7 @@
 #include <merge_maps/triangle.h>
 #include <geometry_msgs/Point.h>
 #include <image_transport/image_transport.h>
+#include <std_msgs/Int32.h>
 
 
 cv_bridge::CvImage cv_img_full_;
@@ -35,8 +36,11 @@ void offsetCallback(const merge_maps::triangle& cords)
 {
     if(firstmerge==1)
     {
-        mergeImages1.src_tri = cords.src;
-        mergeImages1.dst_tri = cords.dst;
+        //mergeImages1.src_tri = cords.src;
+        //mergeImages1.dst_tri = cords.dst;
+        mergeImages1.offset_y=(int) cords.offset_y;
+        mergeImages1.offset_x=(int) cords.offset_x;
+
         mergeImages1.offset_received = 1;
         firstmerge=0;
     }

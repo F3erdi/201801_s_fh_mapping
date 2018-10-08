@@ -14,6 +14,7 @@
 #include <geometry_msgs/Point.h>
 #include <image_transport/image_transport.h>
 
+
 class mergeImages{
 
 public:
@@ -27,7 +28,7 @@ public:
     cv_bridge::CvImage cv_img_new;
     cv_bridge::CvImage stat,dyn;
     cv::Mat warp_mat;
-    geometry_msgs::Point src_tri,dst_tri;
+   // geometry_msgs::Point src_tri,dst_tri;
     int offset_x,offset_y;
     int offset_received;
 
@@ -63,13 +64,14 @@ public:
             cv_img_new.image=cv::Mat::zeros(cv_img_stat.image.size(),CV_8U);
             cv_img_dyn_w.image=cv::Mat (cv_img_stat.image.size(),CV_8U);
 
-            offset_x=src_tri.x-dst_tri.x;
-            offset_y=src_tri.y-dst_tri.y;
+           // offset_x=src_tri.x-dst_tri.x;
+            //offset_y=src_tri.y-dst_tri.y;
+
 
             ROS_INFO("ofx: %i, ofy: %i",offset_x,offset_y);
 
 
-            float of[]={1,0,offset_x,0,1,offset_y};
+            float of[]={1,0,-offset_x,0,1,offset_y};
 
 
             warp_mat = cv::Mat (2,3,CV_32FC1,of);

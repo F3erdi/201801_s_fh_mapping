@@ -23,7 +23,7 @@ public:
     int dyn_sizex,stat_sizex,dyn_sizey,stat_sizey;
     int tf_x,tf_y;
     int dyn,stat,orig;
-    geometry_msgs::Point src_tri,dst_tri;
+    int off_x,off_y;
 
     ros::Publisher offset_pub;
 
@@ -37,22 +37,24 @@ public:
 
   if(dyn==1 && stat==1 && orig==1)
     {
-            int v1_x = amcl_offset_x + abs(stat_origin_x);
+            int v1_x = amcl_offset_x /*+ abs(stat_origin_x)*/;
             int v1_ytemp = amcl_offset_y + abs(stat_origin_y);
 
             int v1_y=stat_sizey-v1_ytemp;
 
-            src_tri.x= v1_x;
-            src_tri.y= v1_y;
-            src_tri.z=0;
+            off_x= v1_x;
+            off_y= v1_y;
+            //src_tri.x= v1_x;
+            // src_tri.y= v1_y;
+            //src_tri.z=0;
 
             int v2_x = abs(dyn_origin_x);
             int v2_ytemp = abs(dyn_origin_y);
 
             int v2_y=dyn_sizey-v2_ytemp;
-            dst_tri.x= v2_x;
-            dst_tri.y= v2_y;
-            dst_tri.z=0;
+            //dst_tri.x= v2_x;
+            // dst_tri.y= v2_y;
+            // dst_tri.z=0;
 
             return(1);
     }

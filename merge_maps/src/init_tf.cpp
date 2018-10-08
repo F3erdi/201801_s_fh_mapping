@@ -11,6 +11,7 @@
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include "../include/init_tf.hpp"
 #include <merge_maps/triangle.h>
+#include <std_msgs/Int32.h>
 
 
 int offset_x,offset_y;
@@ -34,9 +35,9 @@ void dynPose_Callback(const nav_msgs::MapMetaDataConstPtr& dynData)
     i=Cords.coordinates();
 
     if(i==1) {
-        tri_msg.src = Cords.src_tri;
+        tri_msg.offset_x =Cords.off_x;
 
-        tri_msg.dst = Cords.dst_tri;
+        tri_msg.offset_y =Cords.off_y;
 
         Cords.offset_pub.publish(tri_msg);
     }
