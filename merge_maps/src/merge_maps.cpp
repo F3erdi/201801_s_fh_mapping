@@ -36,8 +36,7 @@ void offsetCallback(const merge_maps::triangle& cords)
 {
     if(firstmerge==1)
     {
-        //mergeImages1.src_tri = cords.src;
-        //mergeImages1.dst_tri = cords.dst;
+
         mergeImages1.offset_y=(int) cords.offset_y;
         mergeImages1.offset_x=(int) cords.offset_x;
 

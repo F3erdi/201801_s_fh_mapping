@@ -71,7 +71,7 @@ public:
             ROS_INFO("ofx: %i, ofy: %i",offset_x,offset_y);
 
 
-            float of[]={1,0,-offset_x,0,1,offset_y};
+            float of[]={1,0,offset_x,0,1,offset_y};
 
 
             warp_mat = cv::Mat (2,3,CV_32FC1,of);

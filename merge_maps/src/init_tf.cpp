@@ -2,6 +2,7 @@
 // Created by ferdi on 06.10.18.
 //
 #include "ros/ros.h"
+#include <tf/tf.h>
 #include "nav_msgs/OccupancyGrid.h"
 #include "nav_msgs/MapMetaData.h"
 #include <cv_bridge/cv_bridge.h>
@@ -53,6 +54,19 @@ void statPose_Callback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr&
 
     Cords.amcl_offset_x=offset_x;
     Cords.amcl_offset_y=offset_y;
+
+
+    tf::Pose pose;
+    tf::poseMsgToTF(pose_amcl->pose.pose, pose);
+    double yaw_angle = tf::getYaw(pose.getRotation());
+
+    Cords.angle=yaw_angle;
+
+    /*double roll, pitch, yaw;
+
+    m.getRPY(roll, pitch, yaw);*/
+
+    //ROS_INFO("yaw:%f , roll: %f, pitch: %f ",yaw,roll,pitch) ;
 
     ROS_INFO("statx: %i  staty: %i",offset_x,offset_y);
     Cords.stat=1;

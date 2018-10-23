@@ -24,6 +24,7 @@ public:
     int tf_x,tf_y;
     int dyn,stat,orig;
     int off_x,off_y;
+    double angle;
 
     ros::Publisher offset_pub;
 
@@ -37,24 +38,39 @@ public:
 
   if(dyn==1 && stat==1 && orig==1)
     {
-            int v1_x = amcl_offset_x /*+ abs(stat_origin_x)*/;
+        int v1_x = amcl_offset_x /*+ abs(stat_origin_x)*/;
+        int v1_y;
+        int v2_x = abs(dyn_origin_x);
+
+        if (dyn_origin_x==stat_origin_x) {
+            off_x= 0;
+        }
+        else{
+            off_x=abs(stat_origin_x)-v2_x;
+        }
+
+        if (dyn_origin_y==stat_origin_y)
+        {
+            v1_y=stat_sizey-abs(stat_origin_y);
+        }
+        else
+        {
             int v1_ytemp = amcl_offset_y + abs(stat_origin_y);
 
-            int v1_y=stat_sizey-v1_ytemp;
+            v1_y=stat_sizey-v1_ytemp;
+        }
 
-            off_x= v1_x;
-            off_y= v1_y;
-            //src_tri.x= v1_x;
-            // src_tri.y= v1_y;
-            //src_tri.z=0;
 
-            int v2_x = abs(dyn_origin_x);
+
             int v2_ytemp = abs(dyn_origin_y);
-
             int v2_y=dyn_sizey-v2_ytemp;
-            //dst_tri.x= v2_x;
-            // dst_tri.y= v2_y;
-            // dst_tri.z=0;
+
+        off_y=v1_y-v2_y;
+
+
+
+
+
 
             return(1);
     }
