@@ -87,10 +87,17 @@ public:
 
             cv::add(cv_img_stat.image,cv_img_dyn_w.image,cv_img_new.image);
 
+            cv_img_new.image.setTo(254,cv_img_new.image==127);
+            cv_img_new.image.setTo(254,cv_img_new.image==190);
 
-            cv_img_new.image.setTo(126,63);
-            cv_img_new.image.setTo(256,190);
-            cv_img_new.image.setTo(256,127);
+            cv_img_new.image.setTo(0,cv_img_new.image==254);
+
+            cv_img_new.image.setTo(126,cv_img_new.image==63);
+
+            cv_img_new.image.setTo(256,cv_img_new.image==128);
+            cv_img_new.image.setTo(256,cv_img_new.image==1);
+            cv_img_new.image.setTo(256,cv_img_new.image==2);
+            cv_img_new.image.setTo(256,cv_img_new.image==64);
 
         dyn_received=0;
 

@@ -2,7 +2,7 @@
 
 slam_gmapping/map_update_interval: 0.1
 slam_gmapping/maxUrange: 6.0
-slam_gmapping/maxRange: 8.0
+slam_gmapping/maxRange: 10.0
 slam_gmapping/sigma: 0.05
 slam_gmapping/kernelSize: 1
 slam_gmapping/lstep: 0.05

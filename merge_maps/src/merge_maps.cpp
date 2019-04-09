@@ -93,11 +93,11 @@ void DYNCallback(const nav_msgs::OccupancyGridConstPtr& dyn_grid) {
                     break;
 
                 case 0:
-                    map_mat_data_p[idx]  = 127;
+                    map_mat_data_p[idx]  = 1;
                     break;
 
                 case 100:
-                    map_mat_data_p[idx]  = 0;
+                    map_mat_data_p[idx]  = 127;
                     break;
             }
         }
@@ -181,11 +181,11 @@ void STATCallback(const nav_msgs::OccupancyGridConstPtr& stat_grid)
                     break;
 
                 case 0:
-                    map_mat_data_p_stat[idx]  = 127;
+                    map_mat_data_p_stat[idx]  = 1;
                     break;
 
                 case 100:
-                    map_mat_data_p_stat[idx]  = 0;
+                    map_mat_data_p_stat[idx]  = 127;
                     break;
             }
         }
