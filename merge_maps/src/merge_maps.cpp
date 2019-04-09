@@ -31,6 +31,8 @@ int tfreceived = 0;
 int offset_x = 0;
 int offset_y = 0;
 int firstmerge=1;
+int temp = 1;
+int ttt= 1;
 
 void offsetCallback(const merge_maps::triangle& cords)
 {
@@ -66,7 +68,7 @@ void DYNCallback(const nav_msgs::OccupancyGridConstPtr& dyn_grid) {
 
     // resize cv image if it doesn't have the same dimensions as the map
     if ((map_mat->rows != size_y) && (map_mat->cols != size_x)) {
-        *map_mat = cv::Mat(size_y, size_x, CV_8U);
+        *map_mat = cv::Mat(size_y, size_x, CV_8UC1);
     }
 
     const std::vector <int8_t> &map_data(dyn_grid->data);
@@ -101,7 +103,7 @@ void DYNCallback(const nav_msgs::OccupancyGridConstPtr& dyn_grid) {
         }
     }
 
-    cv::imwrite("dyn.png", cv_img_full_.image,compression_params);
+   // cv::imwrite("dyn.png", cv_img_full_.image,compression_params);
 
 
 if(mergeImages1.offset_received==1) {
@@ -111,10 +113,14 @@ if(mergeImages1.offset_received==1) {
 
     cv_bridge::CvImage map = mergeImages1.merge();
 
-    sensor_msgs::ImagePtr msg = map.toImageMsg();
+    /*sensor_msgs::ImagePtr msg = map.toImageMsg();
 
-    mergeImages1.pub.publish(msg);
 
+    if(ttt==1) {
+        mergeImages1.pub.publish(msg);
+        ttt=0;
+    }
+     */
     cv::imwrite("map.png", map.image, compression_params);
 
 
@@ -164,6 +170,11 @@ void STATCallback(const nav_msgs::OccupancyGridConstPtr& stat_grid)
 
             int idx = idx_img_y + x;
 
+
+            if (temp==1){
+                ROS_INFO("idx: %i, map: %i", idx, idx_map_y + x);
+            temp=0;
+        }
             switch (map_data_stat[idx_map_y + x]) {
                 case -1:
                     map_mat_data_p_stat[idx]  = 63;
@@ -180,7 +191,7 @@ void STATCallback(const nav_msgs::OccupancyGridConstPtr& stat_grid)
         }
     }
 
-    cv::imwrite("stat.png", cv_img_full_stat.image,compression_params);
+    //cv::imwrite("stat.png", cv_img_full_stat.image,compression_params);
 
     mergeImages1.cv_img_stat=cv_img_full_stat;
    // mergeImages1.Provide_Stat();

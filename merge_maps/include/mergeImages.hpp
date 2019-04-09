@@ -61,8 +61,8 @@ public:
         if(stat_received == 1 && dyn_received==1)
         {
 
-            cv_img_new.image=cv::Mat::zeros(cv_img_stat.image.size(),CV_8U);
-            cv_img_dyn_w.image=cv::Mat (cv_img_stat.image.size(),CV_8U);
+            cv_img_new.image=cv::Mat::zeros(cv_img_stat.image.size(),CV_8UC1);
+            cv_img_dyn_w.image=cv::Mat (cv_img_stat.image.size(),CV_8UC1);
 
            // offset_x=src_tri.x-dst_tri.x;
             //offset_y=src_tri.y-dst_tri.y;
@@ -83,11 +83,14 @@ public:
           //  ROS_INFO("stat: %d  %d",cv_img_stat.image.rows,cv_img_stat.image.cols);
           //  ROS_INFO("dyn: %d  %d",cv_img_dyn.image.rows,cv_img_dyn.image.cols);
           //  ROS_INFO("new: %d  %d",cv_img_new.image.rows,cv_img_new.image.cols);
-
-            cv::imwrite("warp.png", cv_img_dyn_w.image);
+            // cv::imwrite("warp.png", cv_img_dyn_w.image);
 
             cv::add(cv_img_stat.image,cv_img_dyn_w.image,cv_img_new.image);
 
+
+            cv_img_new.image.setTo(126,63);
+            cv_img_new.image.setTo(256,190);
+            cv_img_new.image.setTo(256,127);
 
         dyn_received=0;
 
